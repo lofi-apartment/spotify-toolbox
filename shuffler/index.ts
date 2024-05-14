@@ -38,11 +38,17 @@ export const shuffle = command({
         const sdk = SpotifyApi.withClientCredentials(clientId, clientSecret, SDK_SCOPES)
         const playlistId = parsePlaylistId(playlistUrl)
 
+        if (!playlistId) {
+            console.error('Failed to parse playlist ID')
+            process.exit(1)
+        }
+
         try {
             const tracks = await sdk.playlists.getPlaylistItems(playlistId)
             console.log(JSON.stringify(tracks, null, 4))
         } catch (e) {
-            console.error(e)
+            console.error('Error listing tracks:', e)
+            process.exit(1)
         }
     },
 })
