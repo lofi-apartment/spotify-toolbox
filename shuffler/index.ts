@@ -2,16 +2,8 @@ import {
     command,
     positional,
     string,
-    boolean,
-    flag,
     run,
 } from 'cmd-ts'
-  
-const yesFlag = flag({
-    type: boolean,
-    long: 'yes',
-    short: 'y',
-})
 
 const shuffle = command({
     name: 'shuffle',
@@ -22,3 +14,5 @@ const shuffle = command({
         console.log(collectionUrl)
     },
 })
+
+run(shuffle, process.argv.slice(2))
