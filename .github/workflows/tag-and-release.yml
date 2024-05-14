@@ -39,11 +39,11 @@ jobs:
           git tag "$FULL_TAG"
           git push origin "$FULL_TAG"
 
-          git push --delete origin "$FLOATING_MINOR" || true
+          git push --delete origin "$FLOATING_MINOR" 2> /dev/null || true
           git tag "$FLOATING_MINOR"
           git push origin "$FLOATING_MINOR"
 
-          git push --delete origin "$FLOATING_MAJOR" || true
+          git push --delete origin "$FLOATING_MAJOR" 2> /dev/null || true
           git tag "$FLOATING_MAJOR"
           git push origin "$FLOATING_MAJOR"
 
