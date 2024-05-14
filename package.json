@@ -1,0 +1,24 @@
+{
+  "name": "spotify-toolbox",
+  "version": "1.0.0",
+  "description": "Tools for Spotify!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@spotify/web-api-ts-sdk": "^1.2.0",
+    "cmd-ts": "^0.13.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.2.0",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint": "^8.57.0",
+    "typescript-eslint": "^7.9.0"
+  }
+}
