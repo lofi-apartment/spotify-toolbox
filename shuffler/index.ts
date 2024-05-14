@@ -1,18 +1,31 @@
-import {
-    command,
-    positional,
-    string,
-    run,
-} from 'cmd-ts'
+import { command, string, option } from 'cmd-ts'
 
-const shuffle = command({
+export const shuffle = command({
     name: 'shuffle',
     args: {
-        collectionUrl: positional({ type: string, displayName: 'collection url', }),
+        clientId :option({
+            type: string,
+            long: 'client-id',
+            short: 'i',
+        }),
+        clientSecret: option({
+            type: string,
+            long: 'client-secret',
+            short: 's',
+        }),
+        playlistUrl: option({
+            type: string,
+            long: 'playlist-url',
+            short: 'u',
+        }),
     },
-    handler: ({ collectionUrl }) => {
-        console.log('Collection URL:', collectionUrl)
+    handler: ({ clientId, clientSecret, playlistUrl }) => {
+        console.log({
+            clientId,
+            clientSecret,
+            playlistUrl,
+        })
     },
 })
 
-run(shuffle, process.argv.slice(2))
+
