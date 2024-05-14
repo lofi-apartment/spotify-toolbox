@@ -11,7 +11,7 @@ const shuffle = command({
         collectionUrl: positional({ type: string, displayName: 'collection url', }),
     },
     handler: ({ collectionUrl }) => {
-        console.log(collectionUrl)
+        console.log('Collection URL:', collectionUrl)
     },
 })
 
