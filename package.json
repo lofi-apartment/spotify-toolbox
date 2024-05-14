@@ -8,11 +8,10 @@
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
+    "@spotify/web-api-ts-sdk": "^1.2.0",
+    "cmd-ts": "^0.13.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
-  },
-  "dependencies": {
-    "@spotify/web-api-ts-sdk": "^1.2.0"
   }
 }
