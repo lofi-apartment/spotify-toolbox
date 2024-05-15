@@ -22,7 +22,7 @@ jobs:
         id: version
         uses: paulhatch/semantic-version@v5.3.0
         with:
-          change_path: "app"
+          tag_prefix:
 
       - name: Should tag?
         id: should-tag
@@ -31,9 +31,23 @@ jobs:
 
       - name: Tag commit
         if: ${{ steps.should-tag.outputs.should-tag == 'true' }}
+        env:
+          FULL_TAG: ${{ steps.version.outputs.version_tag }}
+          FLOATING_MAJOR: ${{ steps.version.outputs.major }}
+          FLOATING_MINOR: ${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}
         run: |
-          git tag '${{ steps.version.outputs.version_tag }}'
-          git push origin '${{ steps.version.outputs.version_tag }}'
+          git tag "$FULL_TAG"
+          git push origin "$FULL_TAG"
+
+          git push --delete origin "$FLOATING_MINOR" || true
+          git tag --delete "$FLOATING_MINOR" || true
+          git tag "$FLOATING_MINOR"
+          git push origin "$FLOATING_MINOR"
+
+          git push --delete origin "$FLOATING_MAJOR" || true
+          git tag --delete "$FLOATING_MAJOR" || true
+          git tag "$FLOATING_MAJOR"
+          git push origin "$FLOATING_MAJOR"
 
       - name: Create release
         if: ${{ steps.should-tag.outputs.should-tag == 'true' }}
