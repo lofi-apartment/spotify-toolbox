@@ -1,21 +1,12 @@
 import { SpotifyApi } from '@spotify/web-api-ts-sdk'
 import { command, string, option } from 'cmd-ts'
+import Shuffler from './shuffler'
 
 const SDK_SCOPES = [
     'playlist-read-private',
     'playlist-modify-private',
     'playlist-modify-public',
 ]
-
-const parsePlaylistId = (playlistURL: string): string => {
-    const idStart = playlistURL.lastIndexOf('/')+1
-    let idEnd = playlistURL.indexOf('?')
-    if (idEnd < 0) {
-        idEnd = playlistURL.length
-    }
-
-    return playlistURL.substring(idStart, idEnd)
-}
 
 export const shuffle = command({
     name: 'shuffle',
@@ -36,20 +27,8 @@ export const shuffle = command({
     },
     handler: async ({ clientId, clientSecret, playlistUrl }) => {
         const sdk = SpotifyApi.withClientCredentials(clientId, clientSecret, SDK_SCOPES)
-        const playlistId = parsePlaylistId(playlistUrl)
-
-        if (!playlistId) {
-            console.error('Failed to parse playlist ID')
-            process.exit(1)
-        }
-
-        try {
-            const tracks = await sdk.playlists.getPlaylistItems(playlistId)
-            console.log(JSON.stringify(tracks, null, 4))
-        } catch (e) {
-            console.error('Error listing tracks:', e)
-            process.exit(1)
-        }
+        const shuffler = new Shuffler(sdk, playlistUrl)
+        await shuffler.shuffle()
     },
 })
 
