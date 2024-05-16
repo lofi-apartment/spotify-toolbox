@@ -16,9 +16,3 @@ jobs:
   checks:
     uses: ./.github/workflows/checks.yml
     secrets: inherit
-
-  build-tools:
-    uses: ./.github/workflows/build-tools.yml
-    with:
-      VERSION: ${{ github.sha }}
-    secrets: inherit
