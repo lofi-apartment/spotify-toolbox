@@ -21,8 +21,11 @@ defaults:
 
 jobs:
 
-  build-tools:
+  setup:
     runs-on: ubuntu-latest
+    outputs:
+      tools: ${{ steps.list-tools.outputs.tools }}
+      docker-tools: ${{ steps.docker-tools.outputs.docker-tools }}
     steps:
 
       - uses: actions/checkout@v4
@@ -32,20 +35,30 @@ jobs:
         run: |
           echo "tools=$(make tools)" | tee -a "$GITHUB_OUTPUT"
 
-      - name: Fiilter tools with Dockerfiles
+      - name: List tools with Dockerfiles
         id: docker-tools
-        env:
-          TOOLS: ${{ steps.list-tools.outputs.tools }}
         run: |
-          TOOLS="$(printf '%s' "$TOOLS" | jq -rc '.[]')"
-
-          docker_tools='[]'
-
+          DOCKER_TOOLS='[]'
           while IFS= read -r tool; do
-              echo "$tool"
               if test -f ./$tool/Dockerfile; then
-                docker_tools=$(printf '%s' "$docker_tools" | jq -rc --arg tool "$tool" '. += [$tool]')
+                DOCKER_TOOLS=$(printf '%s' "$DOCKER_TOOLS" | jq -rc --arg tool "$tool" '. += [$tool]')
               fi
-          done <<< "$TOOLS"
+          done <<< "$(make tools | jq -rc '.[]')"
 
-          echo "tools=$docker_tools" | tee -a "$GITHUB_OUTPUT"
+          echo "docker-tools=$DOCKER_TOOLS" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Generate path filters
+        id: path-filters
+        run: |
+          FILTERS=$(make tools | jq -rc '.[]' | sed -E 's,(.+),\1:\n  - \1/**,')
+          {
+            echo 'filters<<EOF';
+            echo "$FILTERS"
+            echo 'EOF'
+          } | tee -a $GITHUB_OUTPUT
+
+      - name: Detect changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: ${{ steps.path-filters.outputs.filters }}
+
