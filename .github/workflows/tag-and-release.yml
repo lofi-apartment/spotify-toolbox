@@ -8,9 +8,15 @@ on:
 permissions:
   contents: write
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   tag-and-release:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
 
       - name: Checkout
@@ -55,3 +61,10 @@ jobs:
           gh release create '${{ steps.version.outputs.version_tag }}' --generate-notes
         env:
           GH_TOKEN: ${{ github.token }}
+
+  build-tools:
+    needs: [tag-and-release]
+    uses: ./.github/workflows/build-tools.yml
+    with:
+      VERSION: ${{ needs.tag-and-release.outputs.version }}
+    secrets: inherit

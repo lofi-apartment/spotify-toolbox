@@ -1,0 +1,75 @@
+name: build-tools
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      VERSION:
+        type: string
+        required: true
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      tools: ${{ steps.list-tools.outputs.tools }}
+      docker-tools: ${{ steps.docker-tools.outputs.docker-tools }}
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: List tools
+        id: list-tools
+        run: |
+          echo "tools=$(make tools)" | tee -a "$GITHUB_OUTPUT"
+
+      - name: List tools with Dockerfiles
+        id: docker-tools
+        run: |
+          DOCKER_TOOLS='[]'
+          while IFS= read -r tool; do
+              if test -f ./$tool/Dockerfile; then
+                DOCKER_TOOLS=$(printf '%s' "$DOCKER_TOOLS" | jq -rc --arg tool "$tool" '. += [$tool]')
+              fi
+          done <<< "$(make tools | jq -rc '.[]')"
+
+          echo "docker-tools=$DOCKER_TOOLS" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Generate path filters
+        id: path-filters
+        run: |
+          FILTERS=$(make tools | jq -rc '.[]' | sed -E 's,(.+),\1:\n  - \1/**,')
+          {
+            echo 'filters<<EOF';
+            echo "$FILTERS"
+            echo 'EOF'
+          } | tee -a $GITHUB_OUTPUT
+
+      - name: Detect changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: ${{ steps.path-filters.outputs.filters }}
+
+  build-tools:
+    needs: [setup]
+    uses: ./.github/workflows/tool-build.yml
+    strategy:
+      matrix:
+        tool: ${{ fromJson(needs.setup.outputs.tools) }}
+    with:
+      VERSION: ${{ inputs.VERSION }}
+      TOOL: ${{ matrix.tool }}
+      DOCKER: ${{ contains(fromJson(needs.setup.outputs.docker-tools), matrix.tool) }}
+    secrets: inherit

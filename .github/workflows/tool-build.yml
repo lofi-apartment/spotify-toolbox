@@ -1,0 +1,37 @@
+name: build-tool
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  workflow_call:
+    inputs:
+      TOOL:
+        type: string
+        required: true
+      VERSION:
+        type: string
+        required: true
+      DOCKER:
+        type: boolean
+        required: false
+        default: false
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+
+jobs:
+
+  docker-build:
+    if: inputs.DOCKER
+    uses: ./.github/workflows/tool-docker-build.yml
+    with:
+      TOOL: ${{ inputs.TOOL }}
+      VERSION: ${{ inputs.VERSION }}
+    secrets: inherit
