@@ -37,6 +37,8 @@ jobs:
         env:
           TOOLS: ${{ steps.list-tools.outputs.tools }}
         run: |
+          TOOLS=$(printf '%s' "$TOOLS" | jq --raw-input '.[]')
+
           docker_tools='[]'
 
           while IFS= read -r tool; do
@@ -44,6 +46,6 @@ jobs:
               if test -f /$tool/Dockerfile; then
                 docker_tools=$(printf '%s' "$docker_tools" | jq --arg tool "$tool" '. |= $tool')
               fi
-          done <<< $(printf '%s' "$TOOLS" | jq '.[]')
+          done <<< "$TOOLS"
 
           echo "tools=$docker_tools" | tee -a "$GITHUB_OUTPUT"
