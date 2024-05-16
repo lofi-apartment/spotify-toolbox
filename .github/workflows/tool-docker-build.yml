@@ -46,10 +46,9 @@ jobs:
         with:
           images: ${{ vars.DOCKERHUB_USERNAME }}/spotify-${{ inputs.TOOL }}
           tags: |
-            type=ref,event=branch
             type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{version}},value=${{ inputs.VERSION }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.VERSION }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
