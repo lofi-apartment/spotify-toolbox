@@ -30,7 +30,7 @@ jobs:
 
   docker-build:
     if: inputs.DOCKER
-    uses: ./.github/workflows/build-tool-docker.yml
+    uses: ./.github/workflows/tool-docker-build.yml
     with:
       TOOL: ${{ inputs.TOOL }}
       VERSION: ${{ inputs.VERSION }}

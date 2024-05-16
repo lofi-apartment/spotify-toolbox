@@ -64,7 +64,7 @@ jobs:
 
   build-tools:
     needs: [setup]
-    uses: ./.github/workflows/build-tool.yml
+    uses: ./.github/workflows/tool-build.yml
     strategy:
       matrix:
         tool: ${{ fromJson(needs.setup.outputs.tools) }}
