@@ -6,6 +6,9 @@ on:
       TOOL:
         type: string
         required: true
+      VERSION:
+        type: string
+        required: true
     secrets:
       DOCKERHUB_USERNAME:
         required: true
@@ -24,18 +27,6 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ${{ vars.DOCKERHUB_USERNAME }}/spotify-${{ inputs.TOOL }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -53,4 +44,4 @@ jobs:
         with:
           file: ${{ inputs.TOOL }}/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/spotify-${{ inputs.TOOL }}:${{ inputs.VERSION }}

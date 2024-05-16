@@ -62,3 +62,14 @@ jobs:
         with:
           filters: ${{ steps.path-filters.outputs.filters }}
 
+  build-tools:
+    needs: [setup]
+    uses: ./.github/workflows/build-tool.yml
+    strategy:
+      matrix:
+        tool: ${{ needs.setup.outputs.tools }}
+    with:
+      VERSION: ${{ inputs.VERSION }}
+      TOOL: ${{ matrix.tool }}
+      DOCKER: ${{ contains(fromJson(needs.setup.outputs.docker-tools), matrix.tool) }}
+    secrets: inherit
