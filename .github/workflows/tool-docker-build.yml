@@ -46,3 +46,4 @@ jobs:
           file: ${{ inputs.TOOL }}/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ vars.DOCKERHUB_USERNAME }}/spotify-${{ inputs.TOOL }}:${{ inputs.VERSION }}
+          platforms: linux/amd64,linux/arm64,linux/arm64/v8
