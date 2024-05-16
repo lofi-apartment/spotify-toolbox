@@ -1,0 +1,48 @@
+name: build-tools
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      VERSION:
+        type: string
+        required: true
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  build-tools:
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: List tools
+        id: list-tools
+        run: |
+          echo "tools=$(make tools)" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Fiilter tools with Dockerfiles
+        id: docker-tools
+        env:
+          TOOLS: ${{ steps.list-tools.outputs.tools }}
+        run: |
+          docker-tools='[]'
+
+          while IFS= read -r tool; do
+              if test -f /$tool/Dockerfile; then
+                docker-tools=$(printf '%s' "$docker-tools" | jq --arg tool "$tool" '. |= $tool')
+              fi
+          done <<< "$(printf '%s' "$TOOLS" | jq '.[]')"
+
+          echo "docker-tools=$docker-tools" | tee -a "$GITHUB_OUTPUT"

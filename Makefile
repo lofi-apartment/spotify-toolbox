@@ -1,3 +1,7 @@
+tools:
+	@printf '%s' '["downloader", "shuffler"]'
+.PHONY:
+
 lint:
 	npx eslint .
 .PHONY: lint
