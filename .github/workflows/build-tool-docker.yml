@@ -21,8 +21,8 @@ defaults:
 
 jobs:
 
-  build-and-push:
-    name: build-and-push (${{ inputs.TOOL }})
+  docker-build:
+    name: docker-build (${{ inputs.TOOL }})
     runs-on: ubuntu-latest
     steps:
 
