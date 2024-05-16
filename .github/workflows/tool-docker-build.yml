@@ -40,10 +40,22 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ vars.DOCKERHUB_USERNAME }}/spotify-${{ inputs.TOOL }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
           file: ${{ inputs.TOOL }}/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/spotify-${{ inputs.TOOL }}:${{ inputs.VERSION }}
           platforms: linux/amd64,linux/arm64,linux/arm64/v8
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
