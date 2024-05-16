@@ -37,7 +37,7 @@ jobs:
         env:
           TOOLS: ${{ steps.list-tools.outputs.tools }}
         run: |
-          TOOLS=$(printf '%s' "$TOOLS" | jq --raw-input '.[]')
+          TOOLS="$(printf '%s' "$TOOLS" | jq -rc '.[]')"
 
           docker_tools='[]'
 
