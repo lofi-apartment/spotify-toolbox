@@ -40,8 +40,9 @@ jobs:
           docker_tools='[]'
 
           while IFS= read -r tool; do
+              echo "$tool"
               if test -f /$tool/Dockerfile; then
-              docker_tools=$(printf '%s' "$docker_tools" | jq --arg tool "$tool" '. |= $tool')
+                docker_tools=$(printf '%s' "$docker_tools" | jq --arg tool "$tool" '. |= $tool')
               fi
           done <<< "$(printf '%s' "$TOOLS" | jq '.[]')"
 
