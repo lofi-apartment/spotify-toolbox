@@ -44,6 +44,6 @@ jobs:
               if test -f /$tool/Dockerfile; then
                 docker_tools=$(printf '%s' "$docker_tools" | jq --arg tool "$tool" '. |= $tool')
               fi
-          done <<< "$(printf '%s' "$TOOLS" | jq '.[]')"
+          done <<< $(printf '%s' "$TOOLS" | jq '.[]')
 
           echo "tools=$docker_tools" | tee -a "$GITHUB_OUTPUT"
