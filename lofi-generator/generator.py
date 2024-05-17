@@ -29,14 +29,14 @@ class LofiGenerator:
     def load_image(self):
         return ImageClip(self.gif_path or '', duration=5)
 
+    def combine(gif, audio):
+        final = CompositeVideoClip([gif]).fx(loop, duration=audio.duration)
+        final.set_audio(audio)
+        return final
+
     def generate(self):
         composite_audio, _ = self.load_audios()
         gif = self.load_image()
 
-        final = CompositeVideoClip([gif]).fx(loop, duration=composite_audio.duration)
-        final.set_audio(composite_audio)
+        final = self.combine(gif, composite_audio)
         final.write_videofile(self.out_file, fps=24)
-
-
-    # multiply gif out to full duration
-    # add titles
