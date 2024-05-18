@@ -10,7 +10,7 @@ CWD=$(pwd)
 
 if [[ -n "$PLAYLIST_URL" ]]; then
     cd "$AUDIOS_PATH"
-    spotdl --threads 4 --format wav "$PLAYLIST_URL" || exit 1
+    spotdl --output "{list-position}.{output-ext}"  --threads 4 --format wav "$PLAYLIST_URL" || exit 1
     cd "$CWD"
 fi
 
@@ -21,16 +21,16 @@ while IFS='' read -r file; do
         break
     fi
 
-    cp "$file" "$TMP/audio/$count.wav" && echo "loaded $file"
-    files+=("$TMP/audio/$count.wav")
-    count=$(( count + 1 ))
+    files+=("$file")
 done <<< "$(find "$AUDIOS_PATH" -name '*.wav' ! -name 'audio.wav')"
 
+echo "Combining audio files"
 sox $(printf "%q " "${files[@]}") "$TMP/audio.wav" || exit 1
 
 # parse merged duration
 DURATION=$(sox "$TMP/audio.wav" -n stat 2>&1 | sed -nE 's,Length \(seconds\): +([0-9.]+),\1,p')
 
+echo "Generating background"
 ffmpeg \
     -loop 1 \
     -i "$BG_FILE" \
@@ -43,6 +43,7 @@ ffmpeg \
     || rm -rf "$TMP" \
     || exit 1
 
+echo "Adding audio to video"
 ffmpeg \
     -i "$TMP/video.mp4" -i "$TMP/audio.wav" \
     -c:v copy \
