@@ -6,6 +6,9 @@ on:
       VERSION:
         type: string
         required: true
+      VERSION_TAG:
+        type: string
+        required: false
     secrets:
       DOCKERHUB_USERNAME:
         required: true
@@ -76,3 +79,17 @@ jobs:
       TOOL: ${{ matrix.tool }}
       DOCKER: ${{ contains(fromJson(needs.setup.outputs.docker-tools), matrix.tool) }}
     secrets: inherit
+
+  github-release:
+    needs: [setup, release-tools]
+    if: inputs.VERSION_TAG != ''
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Create release
+        run: |
+          gh release create '${{ inputs.VERSION_TAG }}' --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
