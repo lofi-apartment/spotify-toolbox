@@ -8,7 +8,7 @@ mkdir -p "$TMP/audio"
 
 CWD=$(pwd)
 
-if [[ "$PLAYLIST_URL" ]]; then
+if [[ -n "$PLAYLIST_URL" ]]; then
     cd "$AUDIOS_PATH"
     spotdl --threads 4 --format wav "$PLAYLIST_URL" || exit 1
     cd "$CWD"
