@@ -70,5 +70,18 @@ jobs:
     uses: ./.github/workflows/release-tools.yml
     with:
       VERSION: ${{ needs.tag.outputs.version }}
-      VERSION_TAG: ${{ needs.tag.outputs.version-tag }}
     secrets: inherit
+
+  github-release:
+    needs: [tag, release-tools]
+    if: needs.tag.outputs.create-release
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Create release
+        run: |
+          gh release create '${{ needs.tag.outputs.version-tag }}' --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
