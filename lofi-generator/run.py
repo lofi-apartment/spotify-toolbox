@@ -1,17 +1,18 @@
-import argparse
+import os
 from generator import LofiGenerator
 
-parser = argparse.ArgumentParser(
-    prog='generate',
-    description='Generate some lofi!',
+AUDIOS_PATH = os.environ.get('AUDIOS_PATH')
+IMAGE_PATH = os.environ.get('IMAGE_PATH')
+IMAGE_NAME = os.environ.get('IMAGE_NAME')
+OUTPUT_PATH = os.environ.get('OUTPUT_PATH')
+OUTPUT_NAME = os.environ.get('OUTPUT_NAME')
+
+generator = LofiGenerator(
+    audios_path=AUDIOS_PATH,
+    image_path=IMAGE_PATH,
+    image_name=IMAGE_NAME,
+    out_path=OUTPUT_PATH,
+    out_name=OUTPUT_NAME,
 )
-
-parser.add_argument('-a', '--audio-dir', required=True)
-parser.add_argument('-g', '--gif', required=True)
-parser.add_argument('-o', '--out-file', required=True)
-
-args = parser.parse_args()
-
-generator = LofiGenerator(args.audio_dir, args.gif, args.out_file)
 
 generator.generate()
