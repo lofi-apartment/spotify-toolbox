@@ -1,4 +1,4 @@
-name: docker-build-and-push
+name: tool-docker-build
 
 on:
   workflow_call:
@@ -21,8 +21,8 @@ defaults:
 
 jobs:
 
-  docker-build-and-push:
-    name: docker-build-and-push (${{ inputs.TOOL }})
+  build-and-push:
+    name: build-and-push (${{ inputs.TOOL }})
     runs-on: ubuntu-latest
     steps:
 
