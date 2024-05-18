@@ -1,4 +1,4 @@
-name: build-tool
+name: release-tool
 
 permissions:
   contents: read
@@ -28,9 +28,9 @@ on:
 
 jobs:
 
-  docker-build:
+  docker-push:
     if: inputs.DOCKER
-    uses: ./.github/workflows/tool-docker-build.yml
+    uses: ./.github/workflows/release-docker.yml
     with:
       TOOL: ${{ inputs.TOOL }}
       VERSION: ${{ inputs.VERSION }}

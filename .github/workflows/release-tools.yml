@@ -1,4 +1,4 @@
-name: tools-build
+name: release-tools
 
 on:
   workflow_call:
@@ -64,10 +64,10 @@ jobs:
         with:
           filters: ${{ steps.path-filters.outputs.filters }}
 
-  build-tools:
+  release-tools:
     needs: [setup]
     if: needs.setup.outputs.changed-tools != '[]'
-    uses: ./.github/workflows/tool-build.yml
+    uses: ./.github/workflows/release-tool.yml
     strategy:
       matrix:
         tool: ${{ fromJson(needs.setup.outputs.changed-tools) }}
