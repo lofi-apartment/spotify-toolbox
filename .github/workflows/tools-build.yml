@@ -66,6 +66,7 @@ jobs:
 
   build-tools:
     needs: [setup]
+    if: needs.setup.outputs.changed-tools != '[]'
     uses: ./.github/workflows/tool-build.yml
     strategy:
       matrix:
