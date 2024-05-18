@@ -21,15 +21,15 @@ while IFS='' read -r file; do
         break
     fi
 
-    cp "$file" "$TMP/audio/$count.mp3"
-    files+=("$TMP/audio/$count.mp3")
+    cp "$file" "$TMP/audio/$count.wav"
+    files+=("$TMP/audio/$count.wav")
     count=$(( count + 1 ))
-done <<< "$(find "$AUDIOS_PATH" -name '*.mp3' ! -name 'audio.mp3')"
+done <<< "$(find "$AUDIOS_PATH" -name '*.wav' ! -name 'audio.wav')"
 
-sox $(printf "%q " "${files[@]}") "$TMP/audio.mp3" || exit 1
+sox $(printf "%q " "${files[@]}") "$TMP/audio.wav" || exit 1
 
 # parse merged duration
-DURATION=$(sox "$TMP/audio.mp3" -n stat 2>&1 | sed -nE 's,Length \(seconds\): +([0-9.]+),\1,p')
+DURATION=$(sox "$TMP/audio.wav" -n stat 2>&1 | sed -nE 's,Length \(seconds\): +([0-9.]+),\1,p')
 
 ffmpeg \
     -loop 1 \
@@ -44,7 +44,7 @@ ffmpeg \
     || exit 1
 
 ffmpeg \
-    -i "$TMP/video.mp4" -i "$TMP/audio.mp3" \
+    -i "$TMP/video.mp4" -i "$TMP/audio.wav" \
     -c:v copy \
     -map 0:v -map 1:a \
     -y "$OUTPUT_PATH/lofi.mp4" \
