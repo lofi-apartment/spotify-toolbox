@@ -21,7 +21,7 @@ while IFS='' read -r file; do
         break
     fi
 
-    cp "$file" "$TMP/audio/$count.wav"
+    cp "$file" "$TMP/audio/$count.wav" && echo "loaded $file"
     files+=("$TMP/audio/$count.wav")
     count=$(( count + 1 ))
 done <<< "$(find "$AUDIOS_PATH" -name '*.wav' ! -name 'audio.wav')"
