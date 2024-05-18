@@ -64,7 +64,7 @@ jobs:
 
   build-tools:
     needs: [tag-and-release]
-    uses: ./.github/workflows/build-tools.yml
+    uses: ./.github/workflows/tools-build.yml
     with:
       VERSION: ${{ needs.tag-and-release.outputs.version }}
     secrets: inherit
