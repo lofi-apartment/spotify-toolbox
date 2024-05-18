@@ -5,6 +5,7 @@ from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.VideoClip import ImageClip
 from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
 from moviepy.video.fx.all import loop
+from moviepy.audio.fx.all import volumex
 
 class LofiGenerator:
 
@@ -40,16 +41,14 @@ class LofiGenerator:
         image_filename = self.image_path + '/' + image_name
         if image_filename.endswith('.jpg') or image_filename.endswith('.jpeg'):
             clip = ImageClip(image_filename or '', duration=5)
-            clip.close()
             return clip
         else:
             clip = VideoFileClip(image_filename or '')
-            clip.close()
             return clip
 
     def combine(self, gif, audio):
         final = CompositeVideoClip([gif]).fx(loop, duration=audio.duration)
-        final.set_audio(audio)
+        final.audio = audio
         return final
 
     def generate(self):
