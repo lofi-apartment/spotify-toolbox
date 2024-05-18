@@ -9,12 +9,10 @@ from moviepy.audio.fx.all import volumex
 
 class LofiGenerator:
 
-    def __init__(self, audios_path, image_path, image_name, out_path, out_name):
+    def __init__(self, audios_path, bg_file, out_path):
         self.audios_path = audios_path or '/root'
-        self.image_path = image_path or '/root'
-        self.image_name = image_name
+        self.bg_file = bg_file or '/root/lofi.jpeg'
         self.out_path = out_path or '/root'
-        self.out_name = out_name or 'lofi.mp4'
 
     # load audio clips, parse durations and metadata
     def load_audios(self):
@@ -31,29 +29,26 @@ class LofiGenerator:
 
     # load background
     def load_background(self):
-        image_name = self.image_name
-        if image_name is None:
-            for file in os.listdir(self.image_path):
-                if file.startswith('image.'):
-                    image_name = file
-                    break
-
-        image_filename = self.image_path + '/' + image_name
-        if image_filename.endswith('.jpg') or image_filename.endswith('.jpeg'):
-            clip = ImageClip(image_filename or '', duration=5)
+        if self.bg_file.endswith('.jpg') or self.bg_file.endswith('.jpeg'):
+            clip = ImageClip(self.bg_file or '', duration=5)
             return clip
         else:
-            clip = VideoFileClip(image_filename or '')
+            clip = VideoFileClip(self.bg_file or '')
             return clip
 
-    def combine(self, gif, audio):
-        final = CompositeVideoClip([gif]).fx(loop, duration=audio.duration)
-        final.audio = audio
-        return final
-
     def generate(self):
-        composite_audio, _ = self.load_audios()
+        composite_audio, audio_clips = self.load_audios()
         gif = self.load_background()
 
-        final = self.combine(gif, composite_audio)
-        final.write_videofile(self.out_path + '/' + self.out_name, fps=24)
+        final = CompositeVideoClip([gif]).fx(loop, duration=composite_audio.duration)
+
+        composite_audio.write_audiofile(self.out_path + '/audio.mp3', fps=44100)
+        final.write_videofile(self.out_path + '/video.mp4', fps=30, audio=False)
+
+        # Cleanup
+        composite_audio.close()
+        final.close()
+
+        gif.close()
+        for clip in audio_clips:
+            clip.close()
