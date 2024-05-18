@@ -24,7 +24,7 @@ class LofiGenerator:
 
     def generate(self):
         composite_audio, audio_clips = self.load_audios()
-        composite_audio.write_audiofile(self.out_path + '/audio.mp3', fps=44100)
+        composite_audio.write_audiofile(self.out_path + '/audio.wav', fps=44100)
 
         with open(self.out_path + '/duration.txt', 'w+') as duration:
             duration.write(str(composite_audio.duration))
