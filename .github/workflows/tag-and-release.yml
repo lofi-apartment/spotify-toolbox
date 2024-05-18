@@ -58,13 +58,6 @@ jobs:
           git tag "$FLOATING_MAJOR"
           git push origin "$FLOATING_MAJOR"
 
-      - name: Create release
-        if: ${{ steps.should-tag.outputs.should-tag == 'true' }}
-        run: |
-          gh release create '${{ steps.version.outputs.version_tag }}' --generate-notes
-        env:
-          GH_TOKEN: ${{ github.token }}
-
   release-tools:
     needs: [tag]
     uses: ./.github/workflows/release-tools.yml
