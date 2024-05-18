@@ -38,7 +38,6 @@ ffmpeg \
     -t "$DURATION" \
     -pix_fmt yuv420p \
     -vf scale=1960:800 \
-    -filter:v fps=30 \
     "$TMP/video.mp4" \
     || rm -rf "$TMP" \
     || exit 1
