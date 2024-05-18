@@ -22,7 +22,7 @@ defaults:
 jobs:
 
   build-and-push:
-    name: build-and-push (${{ inputs.TOOL }})
+    name: build-and-push (${{ inputs.TOOL }}:${{ inputs.VERSION }})
     runs-on: ubuntu-latest
     steps:
 
