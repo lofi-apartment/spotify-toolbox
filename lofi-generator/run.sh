@@ -6,6 +6,14 @@ TMP="$OUTPUT_PATH/tmp-$EPOCH"
 mkdir -p "$TMP"
 mkdir -p "$TMP/audio"
 
+CWD=$(pwd)
+
+if [[ "$PLAYLIST_URL" ]]; then
+    cd "$AUDIOS_PATH"
+    spotdl --threads 4 --format wav "$PLAYLIST_URL" || exit 1
+    cd "$CWD"
+fi
+
 files=()
 count=0
 while IFS='' read -r file; do
@@ -18,7 +26,6 @@ while IFS='' read -r file; do
     count=$(( count + 1 ))
 done <<< "$(find "$AUDIOS_PATH" -name '*.mp3' ! -name 'audio.mp3')"
 
-echo sox $(printf "%q " "${files[@]}") "$TMP/audio.mp3" || exit 1
 sox $(printf "%q " "${files[@]}") "$TMP/audio.mp3" || exit 1
 
 # parse merged duration
