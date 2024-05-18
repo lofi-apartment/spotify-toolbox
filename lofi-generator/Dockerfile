@@ -3,7 +3,10 @@ FROM python:3.9
 RUN pip install --upgrade pip
 RUN pip install moviepy
 
-COPY generator.py .
-COPY run.py .
+RUN apt-get -y update
+RUN apt-get install -y ffmpeg
 
-CMD ["python", "run.py"]
+COPY . .
+RUN chmod a+x run.sh
+
+CMD ["./run.sh"]
