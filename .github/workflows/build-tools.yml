@@ -26,6 +26,7 @@ jobs:
     outputs:
       tools: ${{ steps.list-tools.outputs.tools }}
       docker-tools: ${{ steps.docker-tools.outputs.docker-tools }}
+      changed-tools: ${{ steps.changes.outputs.changes }}
     steps:
 
       - uses: actions/checkout@v4
@@ -58,6 +59,7 @@ jobs:
           } | tee -a $GITHUB_OUTPUT
 
       - name: Detect changes
+        id: changes
         uses: dorny/paths-filter@v3
         with:
           filters: ${{ steps.path-filters.outputs.filters }}
@@ -67,7 +69,7 @@ jobs:
     uses: ./.github/workflows/tool-build.yml
     strategy:
       matrix:
-        tool: ${{ fromJson(needs.setup.outputs.tools) }}
+        tool: ${{ fromJson(needs.setup.outputs.changed-tools) }}
     with:
       VERSION: ${{ inputs.VERSION }}
       TOOL: ${{ matrix.tool }}
