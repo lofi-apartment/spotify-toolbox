@@ -42,8 +42,8 @@ class LofiGenerator:
 
         final = CompositeVideoClip([gif]).fx(loop, duration=composite_audio.duration)
 
-        composite_audio.write_audiofile(self.out_path + '/lofi.mp3', fps=44100)
-        final.write_videofile(self.out_path + '/lofi.mp4', fps=30, threads=4, audio=False)
+        composite_audio.write_audiofile(self.out_path + '/audio.mp3', fps=44100)
+        final.write_videofile(self.out_path + '/video.mp4', fps=30, audio=False)
 
         # Cleanup
         composite_audio.close()
