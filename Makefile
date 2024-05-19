@@ -1,5 +1,5 @@
 tools:
-	@printf '%s' '["downloader", "lofi-generator", "shuffler"]'
+	@printf '%s' '["downloader", "lofi-generator", "shuffler", "streamer"]'
 .PHONY:
 
 lint:
