@@ -8,6 +8,6 @@ RUN apt-get install -y ffmpeg
 RUN apt-get install -y sox libsox-fmt-all
 
 COPY . .
-RUN chmod a+x run.sh
+RUN chmod a+x generate.sh
 
-CMD ["./run.sh"]
+CMD ["./generate.sh"]
