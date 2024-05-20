@@ -10,17 +10,23 @@ if [[ -z "$FILE" ]]; then
     exit 1
 fi
 
-ffmpeg -re \
-    -i "$FILE" \
-    -pix_fmt yuvj420p \
-    -x264-params keyint=48:min-keyint=48:scenecut=-1 \
-    -b:v 4500k \
-    -b:a 128k \
-    -ar 44100 \
-    -acodec aac \
-    -vcodec libx264 \
-    -preset medium \
-    -crf 28 \
-    -threads 4 \
-    -f flv \
-    "rtmp://a.rtmp.youtube.com/live2/$YOUTUBE_STREAM_KEY"
+run_stream () {
+    ffmpeg \
+        -hide_banner \
+        -re \
+        -i "$FILE" \
+        -pix_fmt yuvj420p \
+        -x264-params keyint=48:min-keyint=48:scenecut=-1 \
+        -b:v 4500k \
+        -b:a 128k \
+        -ar 44100 \
+        -acodec aac \
+        -vcodec libx264 \
+        -preset medium \
+        -crf 28 \
+        -threads 4 \
+        -f flv \
+        "rtmp://a.rtmp.youtube.com/live2/$YOUTUBE_STREAM_KEY"
+}
+
+while run_stream; do :; done
