@@ -22,7 +22,7 @@ run_stream () {
         -ar 44100 \
         -acodec aac \
         -vcodec libx264 \
-        -preset medium \
+        -preset ultrafast \
         -crf 28 \
         -threads 4 \
         -f flv \
