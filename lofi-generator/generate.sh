@@ -62,7 +62,7 @@ $FFMPEG \
     -c:v libx264 \
     -pix_fmt yuv420p \
     -t 1 \
-    -vf 'fps=30, scale=1960:800' \
+    -vf 'scale=1920:1080,fps=30' \
     "$TMP/pre-video.mp4" \
     || cleanuptmp \
     || exit 1
