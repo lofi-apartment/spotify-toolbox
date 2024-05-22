@@ -60,7 +60,7 @@ setup-audiocache () {
     mkdir -p "$audiocache"
 
     # Cleanup previous caches from non-matching hashes
-    find "$AUDIOS_PATH/$cachedir" -path "$AUDIOS_PATH/$cachedir/*" ! -path "*/$audiosha*"
+    find "$AUDIOS_PATH/$cachedir" -path "$AUDIOS_PATH/$cachedir/*" ! -path "*/$audiosha*" -delete
 }
 
 list-audiofiles () {
@@ -111,6 +111,7 @@ parse-track-details () {
         return
     fi
 
+    SECONDS=0
     json_details='[]'
     order=0
     for file in "${files[@]}"; do
@@ -142,6 +143,8 @@ parse-track-details () {
     done
 
     printf '%s\n' "$json_details" > "$audiocache/track-details.json"
+
+    echo "done. took ${SECONDS}s"
 }
 
 generate-background () {
