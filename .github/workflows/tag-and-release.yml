@@ -14,67 +14,12 @@ defaults:
 
 jobs:
 
-  tag:
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-      version-tag: ${{ steps.version.outputs.version_tag }}
-      create-release: ${{ steps.should-tag.outputs.should-tag }}
-    steps:
-
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Bump version
-        id: version
-        uses: paulhatch/semantic-version@v5.4.0
-        with:
-          tag_prefix:
-
-      - name: Should tag?
-        id: should-tag
-        run: |
-          echo "should-tag=${{ steps.version.outputs.changed == 'true' && steps.version.outputs.is_tagged == 'false' }}" | tee -a "$GITHUB_OUTPUT"
-
-      - name: Tag commit
-        if: ${{ steps.should-tag.outputs.should-tag == 'true' }}
-        env:
-          FULL_TAG: ${{ steps.version.outputs.version_tag }}
-          FLOATING_MAJOR: ${{ steps.version.outputs.major }}
-          FLOATING_MINOR: ${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}
-        run: |
-          git tag "$FULL_TAG"
-          git push origin "$FULL_TAG"
-
-          git push --delete origin "$FLOATING_MINOR" || true
-          git tag --delete "$FLOATING_MINOR" || true
-          git tag "$FLOATING_MINOR"
-          git push origin "$FLOATING_MINOR"
-
-          git push --delete origin "$FLOATING_MAJOR" || true
-          git tag --delete "$FLOATING_MAJOR" || true
-          git tag "$FLOATING_MAJOR"
-          git push origin "$FLOATING_MAJOR"
+  tag-and-release:
+    uses: lucaspopp0/workflows/.github/workflows/tag-and-release.yml@v1
 
   release-tools:
-    needs: [tag]
+    needs: [tag-and-release]
     uses: ./.github/workflows/release-tools.yml
     with:
-      VERSION: ${{ needs.tag.outputs.version }}
+      VERSION: ${{ needs.tag-and-release.outputs.version }}
     secrets: inherit
-
-  github-release:
-    needs: [tag, release-tools]
-    if: needs.tag.outputs.create-release
-    runs-on: ubuntu-latest
-    steps:
-
-      - uses: actions/checkout@v4
-
-      - name: Create release
-        run: |
-          gh release create '${{ needs.tag.outputs.version-tag }}' --generate-notes >> $GITHUB_STEP_SUMMARY
-        env:
-          GH_TOKEN: ${{ github.token }}
